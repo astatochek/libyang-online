@@ -1,16 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-type ValidatorModule = {
-  ccall: (
-    funcName: string,
-    returnType: string,
-    argTypes: string[],
-    args: unknown[],
-  ) => string;
-  _malloc: (size: number) => number;
-  _free: (ptr: number) => void;
-};
-
 type ValidationResult = {
   message: string;
   isValid: boolean;
