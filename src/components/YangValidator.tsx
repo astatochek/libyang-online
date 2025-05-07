@@ -5,8 +5,15 @@ type ValidationResult = {
   isValid: boolean;
 };
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line
+    Validator: any;
+  }
+}
+
 export function YangValidator() {
-  const [validator, setValidator] = useState<any>(null);
+  const [validator, setValidator] = useState<Window["Validator"]>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ValidationResult | null>(null);
@@ -17,7 +24,7 @@ export function YangValidator() {
   useEffect(() => {
     const init = async () => {
       try {
-        const module = await (window as any).Validator();
+        const module = await window.Validator();
         setValidator(module);
       } catch (err) {
         console.error("WASM init error:", err);
