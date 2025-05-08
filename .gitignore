@@ -22,8 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# libyang
 libyang/emsdk
 libyang/libyang
 libyang/pcre2-10.42
 libyang/pcre2-install
-libyang/pcre2-10.42.tar.gz
+libyang/*.tar.gz.*
