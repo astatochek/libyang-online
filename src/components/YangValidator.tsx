@@ -228,7 +228,7 @@ export function YangValidator() {
               </div>
             )}
           </div>
-          <div className="p-4 overflow-auto max-h-96 font-mono text-sm whitespace-pre-wrap">
+          <div className="p-4 max-h-96 font-mono text-sm break-all">
             {result.message}
           </div>
         </div>
