@@ -46,7 +46,7 @@ export function YangValidator() {
         [yangContent, xmlContent],
       );
 
-      const isValid = !validationResult.toLowerCase().includes("error");
+      const isValid = validationResult.includes("Validation successful");
       setResult({
         message: validationResult,
         isValid,
