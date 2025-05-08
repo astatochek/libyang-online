@@ -97,27 +97,25 @@ export function YangValidator() {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="text-center py-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-[rgb(var(--green-400))] to-[rgb(var(--emerald-600))] bg-clip-text text-transparent">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent">
           YANG-XML Validator
         </h1>
-        <p className="text-[rgb(var(--gray-400))] mt-2">
+        <p className="text-gray-400 mt-2">
           Validate XML configurations against YANG schemas
         </p>
       </div>
 
       {loading && (
         <div className="flex items-center justify-center p-8 space-x-3">
-          <div className="w-4 h-4 rounded-full bg-[rgb(var(--green-500))] animate-pulse"></div>
-          <div className="w-4 h-4 rounded-full bg-[rgb(var(--green-500))] animate-pulse delay-150"></div>
-          <div className="w-4 h-4 rounded-full bg-[rgb(var(--green-500))] animate-pulse delay-300"></div>
-          <span className="text-[rgb(var(--gray-400))] ml-2">
-            Loading WASM validator...
-          </span>
+          <div className="w-4 h-4 rounded-full bg-green-500 animate-pulse"></div>
+          <div className="w-4 h-4 rounded-full bg-green-500 animate-pulse delay-150"></div>
+          <div className="w-4 h-4 rounded-full bg-green-500 animate-pulse delay-300"></div>
+          <span className="text-gray-400 ml-2">Loading WASM validator...</span>
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-[rgba(var(--red-900),0.3)] border border-[rgb(var(--red-700))] text-[rgb(var(--red-400))] rounded-lg">
+        <div className="p-4 bg-red-900-20 border border-red-700 text-red-400 rounded-lg">
           {error}
         </div>
       )}
@@ -146,8 +144,8 @@ export function YangValidator() {
           disabled={!validator || !yangContent || !xmlContent || loading}
           className={`px-6 py-3 rounded-lg text-white font-medium transition-all duration-200 flex items-center space-x-2 ${
             !validator || !yangContent || !xmlContent || loading
-              ? "bg-[rgb(var(--gray-700))] cursor-not-allowed opacity-50"
-              : "bg-[rgb(var(--green-600))] hover:bg-[rgb(var(--green-700))] shadow-lg hover:shadow-[rgba(var(--green-500),0.2)]"
+              ? "bg-gray-700 cursor-not-allowed opacity-50"
+              : "bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-green-500-20"
           }`}
         >
           <svg
@@ -172,19 +170,19 @@ export function YangValidator() {
           ref={resultRef}
           className={`mt-8 rounded-lg border ${
             result.isValid
-              ? "bg-[rgba(var(--green-900),0.2)] border-[rgb(var(--green-700))]"
-              : "bg-[rgba(var(--red-900),0.2)] border-[rgb(var(--red-700))]"
+              ? "bg-green-900-20 border-green-700"
+              : "bg-red-900-20 border-red-700"
           }`}
         >
           <div
             className={`p-4 flex items-center ${
               result.isValid
-                ? "border-b border-[rgb(var(--green-700))]"
-                : "border-b border-[rgb(var(--red-700))]"
+                ? "border-b border-green-700"
+                : "border-b border-red-700"
             }`}
           >
             {result.isValid ? (
-              <div className="flex items-center text-[rgb(var(--green-400))]">
+              <div className="flex items-center text-green-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -201,7 +199,7 @@ export function YangValidator() {
                 <span className="font-medium">Validation Successful</span>
               </div>
             ) : (
-              <div className="flex items-center text-[rgb(var(--red-400))]">
+              <div className="flex items-center text-red-400">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5 mr-2"
@@ -246,9 +244,7 @@ function FileUpload({
 }: FileUploadProps) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-[rgb(var(--gray-300))]">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-gray-300">{label}</label>
       <div className="relative">
         <input
           type="file"
@@ -257,15 +253,11 @@ function FileUpload({
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           disabled={disabled}
         />
-        <div className="flex items-center justify-between px-4 py-3 border border-[rgb(var(--gray-700))] bg-[rgba(var(--gray-800),0.5)] rounded-lg text-[rgb(var(--gray-300))] hover:bg-[rgb(var(--gray-800))] transition-colors">
+        <div className="flex items-center justify-between px-4 py-3 border border-gray-700 bg-gray-800-50 rounded-lg text-gray-300 hover:bg-gray-800 transition-colors">
           <div className="flex items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className={`h-5 w-5 mr-2 ${
-                type === "yang"
-                  ? "text-[rgb(var(--green-500))]"
-                  : "text-[rgb(var(--emerald-500))]"
-              }`}
+              className={`h-5 w-5 mr-2 ${type === "yang" ? "text-green-500" : "text-emerald-500"}`}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -283,8 +275,8 @@ function FileUpload({
           <span
             className={`text-xs px-2 py-1 rounded ${
               type === "yang"
-                ? "bg-[rgba(var(--green-900),0.5)] text-[rgb(var(--green-400))]"
-                : "bg-[rgba(var(--emerald-900),0.5)] text-[rgb(var(--emerald-400))]"
+                ? "bg-green-900-50 text-green-400"
+                : "bg-emerald-900-50 text-emerald-400"
             }`}
           >
             .{type}
