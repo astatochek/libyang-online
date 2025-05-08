@@ -2,10 +2,6 @@
 #include <string.h>
 #include <emscripten.h>
 
-EMSCRIPTEN_KEEPALIVE
-void write_to_memory(char* dest, unsigned char* src, int length) {
-  memcpy(dest, src, length);
-}
 
 EMSCRIPTEN_KEEPALIVE
 char* validate(const char* yang, const char* xml) {

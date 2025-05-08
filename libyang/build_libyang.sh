@@ -69,7 +69,7 @@ emcc validator.c \
   -I./pcre2-install/include \
   -Llibyang/build -lyang \
   -L./pcre2-install/lib -lpcre2-8 \
-  -s EXPORTED_FUNCTIONS='["_validate","_write_to_memory","_malloc","_free"]' \
+  -s EXPORTED_FUNCTIONS='["_validate","_malloc","_free"]' \
   -s MODULARIZE=1 \
   -s EXPORT_NAME='Validator' \
   -s INITIAL_MEMORY=512MB \
