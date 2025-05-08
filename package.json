@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "compile-wasm": "./libyang/build_libyang.sh"
+    "compile-wasm": " cd ./libyang && ./build_libyang.sh"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.5",
