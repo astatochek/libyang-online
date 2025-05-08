@@ -1,54 +1,86 @@
-# React + TypeScript + Vite
+# Libyang Online
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web application for validating XML files against YANG schemas using Libyang compiled to WebAssembly.
 
-Currently, two official plugins are available:
+## Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Libyang online is a web-based tool that allows users to easily validate their XML data files using YANG data models. It leverages the powerful [Libyang](https://github.com/CESNET/libyang) library, compiled to WebAssembly (WASM) using Emscripten, to perform the validation directly in the browser. This provides a convenient and accessible way to check the compliance of your XML data with your defined YANG schemas without requiring a local Libyang installation.
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Validate XML data against uploaded YANG schema files.
+- Provides detailed validation results, including errors and warnings.
+- Runs entirely in the browser using WebAssembly.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Deployed Application
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The latest version of Libyang online is deployed and available at:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+[https://libyang-online.netlify.app/](https://libyang-online.netlify.app/)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Getting Started
+
+To run this project locally, you'll need Node.js installed.
+
+1. **Clone the repository:**
+
+    ```bash
+    git clone https://github.com/astatochek/libyang-online.git
+    cd libyang-online
+    ```
+
+2. **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3. **Compile Libyang to WebAssembly:**
+
+    This project includes a custom script to download the Libyang source code, Emscripten, and compile Libyang to WebAssembly. This process can take some time depending on your internet connection and system performance.
+
+    ```bash
+    npm run compile-wasm
+    ```
+
+    This script performs the following steps:
+
+    - Clones the [Libyang repository](https://github.com/CESNET/libyang).
+    - Downloads and sets up Emscripten.
+    - Compiles Libyang and its dependencies to WebAssembly.
+    - Places the resulting WASM files in the appropriate directory for the web application to use.
+
+4. **Start the development server:**
+
+    ```bash
+    npm run dev
+    ```
+
+    This will start a local development server, usually at `http://localhost:5173`.
+
+5. **Open the application:**
+
+    Open your web browser and navigate to the address provided by the development server.
+
+## Development
+
+This project uses [Vite](https://vitejs.dev/) for a fast development experience.
+
+- **Run the development server:**
+
+  ```bash
+  npm run dev
+  ```
+
+- **Build for production:**
+
+  ```bash
+  npm run build
+  ```
+
+  This will generate production-ready static files in the `dist` directory.
+- **Preview the production build:**
+
+  ```bash
+  npm run preview
+  ```
