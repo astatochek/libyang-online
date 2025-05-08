@@ -5,15 +5,27 @@ type ValidationResult = {
   isValid: boolean;
 };
 
+type ValidatorModule = {
+  ccall: (
+    funcName: string,
+    returnType: string,
+    artTypes: string[],
+    args: unknown[],
+  ) => unknown;
+  UTF8ToString: (ptr: number) => string;
+  _validate: (yangPtr: number, xmlPtr: number) => number;
+  _malloc: (size: number) => number;
+  _free: (ptr: number) => void;
+};
+
 declare global {
   interface Window {
-    // eslint-disable-next-line
-    Validator: any;
+    Validator: () => Promise<ValidatorModule>;
   }
 }
 
 export function YangValidator() {
-  const [validator, setValidator] = useState<Window["Validator"]>(null);
+  const [validator, setValidator] = useState<ValidatorModule | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ValidationResult | null>(null);
@@ -55,12 +67,10 @@ export function YangValidator() {
         ["string", "string"],
         [yangContent, xmlContent],
       );
+      const message = String(validationResult);
+      const isValid = message.includes("Validation successful");
 
-      const isValid = validationResult.includes("Validation successful");
-      setResult({
-        message: validationResult,
-        isValid,
-      });
+      setResult({ message, isValid });
     } catch (err) {
       setResult({
         message: `Validation error: ${err instanceof Error ? err.message : "Unknown error"}`,
