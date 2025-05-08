@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 type ValidationResult = {
   message: string;
@@ -18,7 +18,17 @@ export function YangValidator() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ValidationResult | null>(null);
   const [yangContent, setYangContent] = useState("");
+  const [yangFileName, setYangFileName] = useState("");
   const [xmlContent, setXmlContent] = useState("");
+  const [xmlFileName, setXmlFileName] = useState("");
+
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (result && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [result]);
 
   // Initialize WASM module
   useEffect(() => {
@@ -69,8 +79,10 @@ export function YangValidator() {
           const content = await file.text();
           if (type === "yang") {
             setYangContent(content);
+            setYangFileName(file.name);
           } else {
             setXmlContent(content);
+            setXmlFileName(file.name);
           }
           setResult(null); // Clear previous result when files change
         } catch (err) {
@@ -83,66 +95,202 @@ export function YangValidator() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-gray-800">YANG-XML Validator</h1>
+    <div className="max-w-4xl mx-auto p-6 space-y-8">
+      <div className="text-center py-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-[rgb(var(--green-400))] to-[rgb(var(--emerald-600))] bg-clip-text text-transparent">
+          YANG-XML Validator
+        </h1>
+        <p className="text-[rgb(var(--gray-400))] mt-2">
+          Validate XML configurations against YANG schemas
+        </p>
+      </div>
+
+      {loading && (
+        <div className="flex items-center justify-center p-8 space-x-3">
+          <div className="w-4 h-4 rounded-full bg-[rgb(var(--green-500))] animate-pulse"></div>
+          <div className="w-4 h-4 rounded-full bg-[rgb(var(--green-500))] animate-pulse delay-150"></div>
+          <div className="w-4 h-4 rounded-full bg-[rgb(var(--green-500))] animate-pulse delay-300"></div>
+          <span className="text-[rgb(var(--gray-400))] ml-2">
+            Loading WASM validator...
+          </span>
+        </div>
+      )}
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded">
+        <div className="p-4 bg-[rgba(var(--red-900),0.3)] border border-[rgb(var(--red-700))] text-[rgb(var(--red-400))] rounded-lg">
           {error}
         </div>
       )}
 
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            YANG Schema
-          </label>
-          <input
-            type="file"
-            accept=".yang"
-            onChange={handleFileChange("yang")}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50"
-            disabled={loading}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FileUpload
+          type="yang"
+          label="YANG Schema"
+          onChange={handleFileChange("yang")}
+          fileName={yangFileName}
+          disabled={loading}
+        />
 
-        <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
-            XML Configuration
-          </label>
-          <input
-            type="file"
-            accept=".xml"
-            onChange={handleFileChange("xml")}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border file:border-gray-300 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50"
-            disabled={loading}
-          />
-        </div>
+        <FileUpload
+          type="xml"
+          label="XML Configuration"
+          onChange={handleFileChange("xml")}
+          fileName={xmlFileName}
+          disabled={loading}
+        />
       </div>
 
-      <button
-        onClick={validate}
-        disabled={!validator || !yangContent || !xmlContent || loading}
-        className={`px-4 py-2 rounded-md text-white ${
-          !validator || !yangContent || !xmlContent || loading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700"
-        }`}
-      >
-        {loading ? "Loading Validator..." : "Validate"}
-      </button>
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={validate}
+          disabled={!validator || !yangContent || !xmlContent || loading}
+          className={`px-6 py-3 rounded-lg text-white font-medium transition-all duration-200 flex items-center space-x-2 ${
+            !validator || !yangContent || !xmlContent || loading
+              ? "bg-[rgb(var(--gray-700))] cursor-not-allowed opacity-50"
+              : "bg-[rgb(var(--green-600))] hover:bg-[rgb(var(--green-700))] shadow-lg hover:shadow-[rgba(var(--green-500),0.2)]"
+          }`}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9 12l2 2 4-4"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+          </svg>
+          <span>{loading ? "Loading Validator..." : "Validate"}</span>
+        </button>
+      </div>
 
       {result && (
         <div
-          className={`p-4 rounded-md border ${
+          ref={resultRef}
+          className={`mt-8 rounded-lg border ${
             result.isValid
-              ? "bg-green-50 border-green-200 text-green-700"
-              : "bg-red-50 border-red-200 text-red-700"
+              ? "bg-[rgba(var(--green-900),0.2)] border-[rgb(var(--green-700))]"
+              : "bg-[rgba(var(--red-900),0.2)] border-[rgb(var(--red-700))]"
           }`}
         >
-          {result.message}
+          <div
+            className={`p-4 flex items-center ${
+              result.isValid
+                ? "border-b border-[rgb(var(--green-700))]"
+                : "border-b border-[rgb(var(--red-700))]"
+            }`}
+          >
+            {result.isValid ? (
+              <div className="flex items-center text-[rgb(var(--green-400))]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span className="font-medium">Validation Successful</span>
+              </div>
+            ) : (
+              <div className="flex items-center text-[rgb(var(--red-400))]">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="15" y1="9" x2="9" y2="15"></line>
+                  <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+                <span className="font-medium">Validation Failed</span>
+              </div>
+            )}
+          </div>
+          <div className="p-4 overflow-auto max-h-96 font-mono text-sm whitespace-pre-wrap">
+            {result.message}
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+interface FileUploadProps {
+  type: "yang" | "xml";
+  label: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fileName: string | null;
+  disabled: boolean;
+}
+
+function FileUpload({
+  type,
+  label,
+  onChange,
+  fileName,
+  disabled,
+}: FileUploadProps) {
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-[rgb(var(--gray-300))]">
+        {label}
+      </label>
+      <div className="relative">
+        <input
+          type="file"
+          accept={`.${type}`}
+          onChange={onChange}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+          disabled={disabled}
+        />
+        <div className="flex items-center justify-between px-4 py-3 border border-[rgb(var(--gray-700))] bg-[rgba(var(--gray-800),0.5)] rounded-lg text-[rgb(var(--gray-300))] hover:bg-[rgb(var(--gray-800))] transition-colors">
+          <div className="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-5 w-5 mr-2 ${
+                type === "yang"
+                  ? "text-[rgb(var(--green-500))]"
+                  : "text-[rgb(var(--emerald-500))]"
+              }`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+              <polyline points="13 2 13 9 20 9"></polyline>
+            </svg>
+            <span className="truncate max-w-[200px]">
+              {fileName || `Choose ${type.toUpperCase()} file...`}
+            </span>
+          </div>
+          <span
+            className={`text-xs px-2 py-1 rounded ${
+              type === "yang"
+                ? "bg-[rgba(var(--green-900),0.5)] text-[rgb(var(--green-400))]"
+                : "bg-[rgba(var(--emerald-900),0.5)] text-[rgb(var(--emerald-400))]"
+            }`}
+          >
+            .{type}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
